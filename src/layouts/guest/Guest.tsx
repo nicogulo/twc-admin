@@ -7,13 +7,9 @@ import {
   theme,
   Tooltip,
 } from 'antd';
-import {
-  CSSTransition,
-  SwitchTransition,
-  TransitionGroup,
-} from 'react-transition-group';
+
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AppstoreAddOutlined,
   GithubOutlined,
@@ -39,9 +35,7 @@ export const GuestLayout = () => {
     token: { borderRadius },
   } = theme.useToken();
   const isMobile = useMediaQuery({ maxWidth: 769 });
-  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
-  const nodeRef = useRef(null);
   const [navFill, setNavFill] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -65,7 +59,7 @@ export const GuestLayout = () => {
 
   return (
     <>
-      <NProgress isAnimating={isLoading} key={location.key} />
+      <NProgress isAnimating={false} key={location.key} />
       <Layout
         className="layout"
         style={{
@@ -137,33 +131,12 @@ export const GuestLayout = () => {
             paddingBottom: '10rem',
           }}
         >
-          <TransitionGroup>
-            <SwitchTransition>
-              <CSSTransition
-                key={`css-transition-${location.key}`}
-                nodeRef={nodeRef}
-                onEnter={() => {
-                  setIsLoading(true);
-                }}
-                onEntered={() => {
-                  setIsLoading(false);
-                }}
-                timeout={300}
-                classNames="page"
-                unmountOnExit
-              >
-                {() => (
-                  <div
-                    ref={nodeRef}
-                    className="site-layout-content"
-                    style={{ background: 'none' }}
-                  >
-                    <Outlet />
-                  </div>
-                )}
-              </CSSTransition>
-            </SwitchTransition>
-          </TransitionGroup>
+          <div
+            className="site-layout-content"
+            style={{ background: 'none' }}
+          >
+            <Outlet />
+          </div>
           <FloatButton.BackTop />
         </Content>
         <Footer
