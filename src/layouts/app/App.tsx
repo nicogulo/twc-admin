@@ -25,11 +25,7 @@ import {
   MoonOutlined,
   SunOutlined,
 } from '@ant-design/icons';
-import {
-  CSSTransition,
-  SwitchTransition,
-  TransitionGroup,
-} from 'react-transition-group';
+
 import { useMediaQuery } from 'react-responsive';
 import SideNav from './SideNav.tsx';
 import HeaderNav from './HeaderNav.tsx';
@@ -52,10 +48,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const isMobile = useMediaQuery({ maxWidth: 769 });
   const [collapsed, setCollapsed] = useState(true);
   const [navFill, setNavFill] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const nodeRef = useRef(null);
   const floatBtnRef = useRef(null);
   const dispatch = useDispatch();
   const { mytheme } = useSelector((state: RootState) => state.theme);
@@ -112,7 +106,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
 
   return (
     <>
-      <NProgress isAnimating={isLoading} key={location.key} />
+      <NProgress isAnimating={false} key={location.key} />
       <Layout
         style={{
           minHeight: '100vh',
@@ -222,29 +216,9 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
               minHeight: 360,
             }}
           >
-            <TransitionGroup>
-              <SwitchTransition>
-                <CSSTransition
-                  key={`css-transition-${location.key}`}
-                  nodeRef={nodeRef}
-                  onEnter={() => {
-                    setIsLoading(true);
-                  }}
-                  onEntered={() => {
-                    setIsLoading(false);
-                  }}
-                  timeout={300}
-                  classNames="bottom-to-top"
-                  unmountOnExit
-                >
-                  {() => (
-                    <div ref={nodeRef} style={{ background: 'none' }}>
-                      {children}
-                    </div>
-                  )}
-                </CSSTransition>
-              </SwitchTransition>
-            </TransitionGroup>
+            <div style={{ background: 'none' }}>
+              {children}
+            </div>
             <div ref={floatBtnRef}>
               <FloatButton.BackTop />
             </div>

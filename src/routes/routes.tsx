@@ -1,4 +1,4 @@
-import { createBrowserRouter, useLocation } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import {
   AccountDeactivePage,
   BiddingDashboardPage,
@@ -43,43 +43,13 @@ import {
   GuestLayout,
   UserAccountLayout,
 } from '../layouts';
-import React, { ReactNode, useEffect } from 'react';
 import { AboutPage } from '../pages/About.tsx';
-
-// Custom scroll restoration function
-export const ScrollToTop: React.FC = () => {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'smooth',
-    }); // Scroll to the top when the location changes
-  }, [pathname]);
-
-  return null; // This component doesn't render anything
-};
-
-type PageProps = {
-  children: ReactNode;
-};
-
-// Create an HOC to wrap your route components with ScrollToTop
-const PageWrapper = ({ children }: PageProps) => {
-  return (
-    <>
-      <ScrollToTop />
-      {children}
-    </>
-  );
-};
 
 // Create the router
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <PageWrapper children={<GuestLayout />} />,
+    element: <GuestLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -91,7 +61,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/dashboards',
-    element: <PageWrapper children={<DashboardLayout />} />,
+    element: <DashboardLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -131,7 +101,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/sitemap',
-    element: <PageWrapper children={<DashboardLayout />} />,
+    element: <DashboardLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -143,7 +113,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/corporate',
-    element: <PageWrapper children={<CorporateLayout />} />,
+    element: <CorporateLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -175,7 +145,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/user-profile',
-    element: <PageWrapper children={<UserAccountLayout />} />,
+    element: <UserAccountLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -271,7 +241,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/about',
-    element: <PageWrapper children={<DashboardLayout />} />,
+    element: <DashboardLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
