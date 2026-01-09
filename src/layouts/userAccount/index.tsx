@@ -1,137 +1,140 @@
 import { AppLayout } from '../app';
 import {
   Col,
-  ConfigProvider,
   Descriptions,
   DescriptionsProps,
   Image,
   Row,
-  Tabs,
-  TabsProps,
   theme,
   Typography,
+  Avatar,
+  Spin,
 } from 'antd';
 import { Card } from '../../components';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { USER_PROFILE_ITEMS } from '../../constants';
+import { Outlet } from 'react-router-dom';
 import { useStylesContext } from '../../context';
+import { useProfile } from '../../hooks';
+import { UserOutlined } from '@ant-design/icons';
 
 const { Link } = Typography;
 
 import './styles.css';
-import { useEffect, useState } from 'react';
-
-const DESCRIPTION_ITEMS: DescriptionsProps['items'] = [
-  {
-    key: 'full-name',
-    label: 'Name',
-    children: <span>Kelvin Kiptum Kiprop</span>,
-  },
-  {
-    key: 'job-title',
-    label: 'Job title',
-    children: <span>Software Engineer</span>,
-  },
-  {
-    key: 'email',
-    label: 'Email',
-    children: (
-      <Link href="mailto:kelvin.kiprop96@gmail.com">
-        kelvin.kiprop96@gmail.com
-      </Link>
-    ),
-  },
-  {
-    key: 'telephone',
-    label: 'Phone',
-    children: <Link href="tel:+254706094433">+254 706 094 4433</Link>,
-  },
-  {
-    key: 'github',
-    label: 'Github',
-    children: (
-      <Link href="https://github.com/kelvink96" target="_blank">
-        kelvink96
-      </Link>
-    ),
-  },
-  {
-    key: 'twitter',
-    label: 'Twitter',
-    children: (
-      <Link href="https://twitter.com/kelvink_96" target="_blank">
-        @kelvink_96
-      </Link>
-    ),
-  },
-];
-
-const TAB_ITEMS: TabsProps['items'] = USER_PROFILE_ITEMS.map((u) => ({
-  key: u.title,
-  label: u.title,
-}));
+import { useMemo } from 'react';
 
 export const UserAccountLayout = () => {
   const {
     token: { borderRadius },
   } = theme.useToken();
-  const navigate = useNavigate();
   const stylesContext = useStylesContext();
-  const location = useLocation();
-  const [activeKey, setActiveKey] = useState(TAB_ITEMS[0].key);
 
-  const onChange = (key: string) => {
-    navigate(key);
-  };
+  // Use profile hook to get real user data
+  const { profile, loading } = useProfile();
 
-  useEffect(() => {
-    console.log(location);
-    const k =
-      TAB_ITEMS.find((d) => location.pathname.includes(d.key))?.key || '';
+  // Generate description items from profile data
+  const descriptionItems: DescriptionsProps['items'] = useMemo(() => {
+    if (!profile) return [];
 
-    console.log(k);
-    setActiveKey(k);
-  }, [location]);
+    const items: DescriptionsProps['items'] = [
+      {
+        key: 'id',
+        label: 'User ID',
+        children: <span>{profile.id || '-'}</span>,
+      },
+      {
+        key: 'name',
+        label: 'Name',
+        children: <span>{profile.name || '-'}</span>,
+      },
+      {
+        key: 'slug',
+        label: 'Username',
+        children: <span>{profile.slug || '-'}</span>,
+      },
+    ];
+
+    // Add website if available
+    if (profile.url) {
+      items.push({
+        key: 'website',
+        label: 'Website',
+        children: (
+          <Link href={profile.url} target="_blank">
+            {profile.url}
+          </Link>
+        ),
+      });
+    }
+
+    // Add description if available
+    if (profile.description) {
+      items.push({
+        key: 'description',
+        label: 'Bio',
+        children: <span>{profile.description}</span>,
+        span: 2,
+      });
+    }
+
+    // Add super admin badge
+    if ('is_super_admin' in profile && profile.is_super_admin) {
+      items.push({
+        key: 'role',
+        label: 'Role',
+        children: (
+          <span style={{ color: '#52c41a', fontWeight: 'bold' }}>
+            Super Admin
+          </span>
+        ),
+      });
+    }
+
+    return items;
+  }, [profile]);
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <Card>
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <Spin size="large" />
+            <p style={{ marginTop: 16 }}>Loading profile...</p>
+          </div>
+        </Card>
+      </AppLayout>
+    );
+  }
 
   return (
     <>
       <AppLayout>
-        <Card
-          className="user-profile-card-nav card"
-          actions={[
-            <ConfigProvider
-              theme={{
-                components: {
-                  Tabs: {
-                    colorBorderSecondary: 'none',
-                  },
-                },
-              }}
-            >
-              <Tabs
-                defaultActiveKey={activeKey}
-                activeKey={activeKey}
-                items={TAB_ITEMS}
-                onChange={onChange}
-                style={{ textTransform: 'capitalize' }}
-              />
-            </ConfigProvider>,
-          ]}
-        >
+        <Card className="user-profile-card-nav card">
           <Row {...stylesContext?.rowProps}>
             <Col xs={24} sm={8} lg={4}>
-              <Image
-                src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
-                alt="user profile image"
-                height="100%"
-                width="100%"
-                style={{ borderRadius }}
-              />
+              {profile?.avatar_urls?.['96'] ? (
+                <Image
+                  src={profile.avatar_urls['96']}
+                  alt={`${profile.name} profile image`}
+                  height="100%"
+                  width="100%"
+                  style={{ borderRadius }}
+                  preview={false}
+                />
+              ) : (
+                <Avatar
+                  size={150}
+                  icon={<UserOutlined />}
+                  style={{
+                    backgroundColor: '#1890ff',
+                    width: '100%',
+                    height: 'auto',
+                  }}
+                />
+              )}
             </Col>
             <Col xs={24} sm={16} lg={20}>
               <Descriptions
                 title="User Info"
-                items={DESCRIPTION_ITEMS}
+                items={descriptionItems}
                 column={{ xs: 1, sm: 2, md: 2, lg: 3, xl: 3, xxl: 4 }}
               />
             </Col>

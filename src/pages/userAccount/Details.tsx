@@ -1,46 +1,65 @@
-import { Button, Col, Form, Input, Radio, Row, Select, Typography } from 'antd';
+import { Button, Col, Form, Input, Row, Typography, Spin, message } from 'antd';
 import { Card } from '../../components';
 import { SaveOutlined } from '@ant-design/icons';
+import { useProfile } from '../../hooks';
+import { useEffect } from 'react';
 
 type FieldType = {
-  username?: string;
-  password?: string;
-  remember?: string;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
-  company?: string;
-  email?: string;
-  subscription?: 'free' | 'pro' | 'enterprise' | 'custom';
-  id?: string;
-  status?: 'active' | 'inactive';
+  id?: number;
+  name?: string;
+  slug?: string;
+  url?: string;
+  description?: string;
 };
 
 export const UserProfileDetailsPage = () => {
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const [form] = Form.useForm();
+  const { profile, loading, updateProfile } = useProfile();
+
+  // Update form when profile data is loaded
+  useEffect(() => {
+    if (profile) {
+      form.setFieldsValue({
+        id: profile.id,
+        name: profile.name,
+        slug: profile.slug,
+        url: profile.url || '',
+        description: profile.description || '',
+      });
+    }
+  }, [profile, form]);
+
+  const onFinish = async (values: any) => {
+    try {
+      await updateProfile(values);
+      message.success('Profile updated successfully!');
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+    message.error('Please check the form and try again');
   };
+
+  if (loading && !profile) {
+    return (
+      <Card>
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Spin size="large" />
+          <p style={{ marginTop: 16 }}>Loading profile...</p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <Form
+        form={form}
         name="user-profile-details-form"
         layout="vertical"
-        initialValues={{
-          id: '474e2cd2-fc79-49b8-98fe-dab443facede',
-          username: 'kelvink96',
-          firstName: 'Kelvin',
-          middleName: 'Kiptum',
-          lastName: 'Kiprop',
-          company: 'Design Sparx',
-          email: 'kelvin.kiprop96@gmail.com',
-          subscription: 'pro',
-          status: 'active',
-        }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="on"
@@ -51,113 +70,55 @@ export const UserProfileDetailsPage = () => {
             <Form.Item<FieldType>
               label="User ID"
               name="id"
-              rules={[{ required: true, message: 'Please input your id!' }]}
+              tooltip="Unique identifier for your account"
             >
               <Input
-                readOnly={true}
+                readOnly
+                disabled
                 suffix={
                   <Typography.Paragraph
-                    copyable={{ text: '474e2cd2-fc79-49b8-98fe-dab443facede' }}
+                    copyable={{ text: String(profile?.id || '') }}
                     style={{ margin: 0 }}
-                  ></Typography.Paragraph>
+                  />
                 }
               />
             </Form.Item>
           </Col>
-          <Col sm={24} lg={8}>
+          <Col sm={24} lg={12}>
             <Form.Item<FieldType>
-              label="First name"
-              name="firstName"
+              label="Display Name"
+              name="name"
               rules={[
-                { required: true, message: 'Please input your first name!' },
+                { required: true, message: 'Please input your display name!' },
               ]}
             >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col sm={24} lg={8}>
-            <Form.Item<FieldType>
-              label="Middle name"
-              name="middleName"
-              rules={[
-                { required: true, message: 'Please input your middle name!' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col sm={24} lg={8}>
-            <Form.Item<FieldType>
-              label="Last name"
-              name="lastName"
-              rules={[
-                { required: true, message: 'Please input your last name!' },
-              ]}
-            >
-              <Input />
+              <Input placeholder="Enter your display name" />
             </Form.Item>
           </Col>
           <Col sm={24} lg={12}>
             <Form.Item<FieldType>
-              label="Email"
-              name="email"
-              rules={[{ required: true, message: 'Please input your email!' }]}
+              label="Username (Slug)"
+              name="slug"
+              tooltip="URL-friendly username"
             >
-              <Input />
+              <Input placeholder="username" disabled />
             </Form.Item>
           </Col>
-          <Col sm={24} lg={12}>
+          <Col sm={24} lg={24}>
             <Form.Item<FieldType>
-              label="Username"
-              name="username"
-              rules={[
-                { required: true, message: 'Please input your username!' },
-              ]}
+              label="Website URL"
+              name="url"
+              rules={[{ type: 'url', message: 'Please enter a valid URL!' }]}
             >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col sm={24} lg={12}>
-            <Form.Item<FieldType>
-              label="Company"
-              name="company"
-              rules={[
-                { required: true, message: 'Please input your company!' },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col sm={24} lg={12}>
-            <Form.Item<FieldType>
-              label="Subscription"
-              name="subscription"
-              rules={[
-                { required: true, message: 'Please select your subscription!' },
-              ]}
-            >
-              <Select
-                options={[
-                  { value: 'free', label: 'Free' },
-                  { value: 'pro', label: 'Pro' },
-                  { value: 'enterprise', label: 'Enterprise' },
-                  { value: 'custom', label: 'Custom', disabled: true },
-                ]}
-              />
+              <Input placeholder="https://yourwebsite.com" />
             </Form.Item>
           </Col>
           <Col span={24}>
-            <Form.Item<FieldType>
-              label="Status"
-              name="status"
-              rules={[
-                { required: true, message: 'Please select your status!' },
-              ]}
-            >
-              <Radio.Group>
-                <Radio value="active">Active</Radio>
-                <Radio value="inactive">Inactive</Radio>
-              </Radio.Group>
+            <Form.Item<FieldType> label="Bio / Description" name="description">
+              <Input.TextArea
+                rows={4}
+                placeholder="Tell us about yourself..."
+              />
             </Form.Item>
           </Col>
         </Row>

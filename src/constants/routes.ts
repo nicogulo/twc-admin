@@ -10,6 +10,7 @@ const ROOTS_BRANDS = '/brands';
 const ROOTS_PRODUCTS = '/products';
 const ROOTS_ABOUT = '/about';
 const ROOTS_SYSTEM = '/system';
+const ROOTS_PROFILE = '/profile';
 const ROOTS_AUTH = '/auth';
 const ROOTS_ERRORS = '/errors';
 
@@ -38,6 +39,11 @@ export const PATH_ABOUT = {
 
 export const PATH_SYSTEM = {
   root: ROOTS_SYSTEM,
+};
+
+export const PATH_PROFILE = {
+  root: ROOTS_PROFILE,
+  details: ROOTS_PROFILE,
 };
 
 export const PATH_AUTH = {

@@ -18,12 +18,14 @@ import { ProductDetailPage } from '../pages/products/ProductDetail';
 import { ProductWooCommerceFormPage } from '../pages/products/ProductWooCommerceForm';
 import { BrandManagementPage } from '../pages/products/BrandManagement';
 import { DashboardLayout } from '../layouts';
+import { UserAccountLayout } from '../layouts/userAccount';
 import React, { ReactNode, useEffect } from 'react';
 import { HomepageSettingsPage } from '../pages/homepage/HomepageSettingsPage';
 import { AboutUsSettingsPage } from '../pages/aboutus/AboutUsSettingsPage';
 import { SystemSettingsPage } from '../pages/system/SystemSettingsPage';
 import { DashboardPage } from '../pages/dashboard/DashboardPage';
 import { ProtectedRoute } from '../components/ProtectedRoute';
+import { UserProfileDetailsPage } from '../pages/userAccount';
 
 // Custom scroll restoration function
 export const ScrollToTop: React.FC = () => {
@@ -162,6 +164,22 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <SystemSettingsPage />,
+      },
+    ],
+  },
+  // Profile Routes (Protected)
+  {
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <PageWrapper children={<UserAccountLayout />} />
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <UserProfileDetailsPage />,
       },
     ],
   },

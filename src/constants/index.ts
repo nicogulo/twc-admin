@@ -9,6 +9,7 @@ import {
   PATH_SYSTEM,
   PATH_PRODUCTS,
   PATH_ERRORS,
+  PATH_PROFILE,
 } from './routes.ts';
 
 const HOMEPAGE_ITEMS = [
@@ -25,6 +26,8 @@ const PRODUCT_ITEMS = [
 const ABOUT_ITEMS = [{ title: 'About Us Page', path: PATH_ABOUT.root }];
 
 const SYSTEM_ITEMS = [{ title: 'System Settings', path: PATH_SYSTEM.root }];
+
+const USER_PROFILE_ITEMS = [{ title: 'details', path: PATH_PROFILE.details }];
 
 const AUTH_ITEMS = [
   { title: 'sign in', path: PATH_AUTH.signin },
@@ -46,13 +49,13 @@ const ERROR_ITEMS = [
 // Temporary dummy exports for backward compatibility (will be removed)
 export const PATH_DASHBOARD = { root: '/', default: '/' };
 export const PATH_CORPORATE = { root: '/about' };
-export const PATH_USER_PROFILE = { root: '/' };
+export const PATH_USER_PROFILE = PATH_PROFILE;
 export const PATH_GITHUB = { repo: '#' };
 export const PATH_DOCS = { help: '#' };
 export const PATH_ERROR = PATH_ERRORS;
 export const DASHBOARD_ITEMS: any[] = [];
 export const CORPORATE_ITEMS: any[] = [];
-export const USER_PROFILE_ITEMS: any[] = [];
+export { USER_PROFILE_ITEMS };
 export const AUTHENTICATION_ITEMS = AUTH_ITEMS;
 
 export {
@@ -61,6 +64,7 @@ export {
   PATH_BRANDS,
   PATH_ABOUT,
   PATH_SYSTEM,
+  PATH_PROFILE,
   PATH_PRODUCTS,
   PATH_AUTH,
   PATH_ERRORS,
