@@ -1,50 +1,29 @@
 import { createBrowserRouter, useLocation } from 'react-router-dom';
 import {
   AccountDeactivePage,
-  BiddingDashboardPage,
-  CorporateAboutPage,
-  CorporateContactPage,
-  CorporateFaqPage,
-  CorporateLicensePage,
-  CorporatePricingPage,
-  CorporateTeamPage,
-  DefaultDashboardPage,
-  EcommerceDashboardPage,
   Error400Page,
   Error403Page,
   Error404Page,
   Error500Page,
   Error503Page,
   ErrorPage,
-  HomePage,
-  MarketingDashboardPage,
   PasswordResetPage,
-  ProjectsDashboardPage,
   SignInPage,
   SignUpPage,
-  SitemapPage,
-  SocialDashboardPage,
-  UserProfileActionsPage,
-  UserProfileActivityPage,
-  UserProfileDetailsPage,
-  UserProfileFeedbackPage,
-  UserProfileHelpPage,
-  UserProfileInformationPage,
-  UserProfilePreferencesPage,
-  UserProfileSecurityPage,
   VerifyEmailPage,
   WelcomePage,
-  LearningDashboardPage,
-  LogisticsDashboardPage,
 } from '../pages';
-import {
-  CorporateLayout,
-  DashboardLayout,
-  GuestLayout,
-  UserAccountLayout,
-} from '../layouts';
+import { ProductListPage } from '../pages/products';
+import { ProductDetailPage } from '../pages/products/ProductDetail';
+import { ProductWooCommerceFormPage } from '../pages/products/ProductWooCommerceForm';
+import { BrandManagementPage } from '../pages/products/BrandManagement';
+import { DashboardLayout } from '../layouts';
 import React, { ReactNode, useEffect } from 'react';
-import { AboutPage } from '../pages/About.tsx';
+import { HomepageSettingsPage } from '../pages/homepage/HomepageSettingsPage';
+import { AboutUsSettingsPage } from '../pages/aboutus/AboutUsSettingsPage';
+import { SystemSettingsPage } from '../pages/system/SystemSettingsPage';
+import { DashboardPage } from '../pages/dashboard/DashboardPage';
+import { ProtectedRoute } from '../components/ProtectedRoute';
 
 // Custom scroll restoration function
 export const ScrollToTop: React.FC = () => {
@@ -75,144 +54,118 @@ const PageWrapper = ({ children }: PageProps) => {
   );
 };
 
-// Create the router
+// Create the router - TWC Admin Panel Routes
 const router = createBrowserRouter([
+  // Root Route - Dashboard (Protected)
   {
     path: '/',
-    element: <PageWrapper children={<GuestLayout />} />,
+    element: (
+      <ProtectedRoute>
+        <PageWrapper children={<DashboardLayout />} />
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <DashboardPage />,
+      },
+    ],
+  },
+  // Homepage Settings Route (Protected)
+  {
+    path: '/homepage',
+    element: (
+      <ProtectedRoute>
+        <PageWrapper children={<DashboardLayout />} />
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <HomepageSettingsPage />,
+      },
+    ],
+  },
+  // Product Management Routes (Protected)
+  {
+    path: '/products',
+    element: (
+      <ProtectedRoute>
+        <PageWrapper children={<DashboardLayout />} />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         path: '',
-        element: <HomePage />,
+        element: <ProductListPage />,
+      },
+      {
+        path: 'add',
+        element: <ProductWooCommerceFormPage />,
+      },
+      {
+        path: 'edit/:id',
+        element: <ProductWooCommerceFormPage />,
+      },
+      {
+        path: ':id',
+        element: <ProductDetailPage />,
       },
     ],
   },
+  // Brand Management Route (Protected)
   {
-    path: '/dashboards',
-    element: <PageWrapper children={<DashboardLayout />} />,
+    path: '/brands',
+    element: (
+      <ProtectedRoute>
+        <PageWrapper children={<DashboardLayout />} />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        path: 'default',
-        element: <DefaultDashboardPage />,
-      },
-      {
-        path: 'projects',
-        element: <ProjectsDashboardPage />,
-      },
-      {
-        path: 'ecommerce',
-        element: <EcommerceDashboardPage />,
-      },
-      {
-        path: 'marketing',
-        element: <MarketingDashboardPage />,
-      },
-      {
-        path: 'social',
-        element: <SocialDashboardPage />,
-      },
-      {
-        path: 'bidding',
-        element: <BiddingDashboardPage />,
-      },
-      {
-        path: 'learning',
-        element: <LearningDashboardPage />,
-      },
-      {
-        path: 'logistics',
-        element: <LogisticsDashboardPage />,
+        element: <BrandManagementPage />,
       },
     ],
   },
+  // About Us Settings Route (Protected)
   {
-    path: '/sitemap',
-    element: <PageWrapper children={<DashboardLayout />} />,
+    path: '/about',
+    element: (
+      <ProtectedRoute>
+        <PageWrapper children={<DashboardLayout />} />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        path: '',
-        element: <SitemapPage />,
+        element: <AboutUsSettingsPage />,
       },
     ],
   },
+  // System Settings Route (Protected - Admin Only)
   {
-    path: '/corporate',
-    element: <PageWrapper children={<CorporateLayout />} />,
+    path: '/system',
+    element: (
+      <ProtectedRoute requireAdmin={true}>
+        <PageWrapper children={<DashboardLayout />} />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        path: 'about',
-        element: <CorporateAboutPage />,
-      },
-      {
-        path: 'team',
-        element: <CorporateTeamPage />,
-      },
-      {
-        path: 'faqs',
-        element: <CorporateFaqPage />,
-      },
-      {
-        path: 'contact',
-        element: <CorporateContactPage />,
-      },
-      {
-        path: 'pricing',
-        element: <CorporatePricingPage />,
-      },
-      {
-        path: 'license',
-        element: <CorporateLicensePage />,
+        element: <SystemSettingsPage />,
       },
     ],
   },
-  {
-    path: '/user-profile',
-    element: <PageWrapper children={<UserAccountLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: 'details',
-        element: <UserProfileDetailsPage />,
-      },
-      {
-        path: 'preferences',
-        element: <UserProfilePreferencesPage />,
-      },
-      {
-        path: 'information',
-        element: <UserProfileInformationPage />,
-      },
-      {
-        path: 'security',
-        element: <UserProfileSecurityPage />,
-      },
-      {
-        path: 'activity',
-        element: <UserProfileActivityPage />,
-      },
-      {
-        path: 'actions',
-        element: <UserProfileActionsPage />,
-      },
-      {
-        path: 'help',
-        element: <UserProfileHelpPage />,
-      },
-      {
-        path: 'feedback',
-        element: <UserProfileFeedbackPage />,
-      },
-    ],
-  },
+  // Authentication Routes
   {
     path: '/auth',
     errorElement: <ErrorPage />,
@@ -266,18 +219,6 @@ const router = createBrowserRouter([
       {
         path: '503',
         element: <Error503Page />,
-      },
-    ],
-  },
-  {
-    path: '/about',
-    element: <PageWrapper children={<DashboardLayout />} />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        path: '',
-        element: <AboutPage />,
       },
     ],
   },
