@@ -38,6 +38,21 @@ import type { Faq } from './faq';
 import type { Pricing } from './pricing';
 import type { Session } from './session';
 import type { ActivityTimeline } from './timeline';
+import type {
+  Product,
+  ProductAttribute,
+  ProductFilters,
+  AttributeType,
+  WatchType,
+  Availability,
+  Condition,
+  Gender,
+  Brand,
+  PricePerformanceEntry,
+} from './product';
+import type { HomepageItem } from './homepage';
+import type { AboutUsPage } from './aboutus';
+import type { SystemSettings } from './system';
 
 export type {
   Projects,
@@ -72,4 +87,17 @@ export type {
   Pricing,
   Session,
   ActivityTimeline,
+  Product,
+  ProductAttribute,
+  ProductFilters,
+  PricePerformanceEntry,
+  AttributeType,
+  WatchType,
+  Availability,
+  Condition,
+  Gender,
+  Brand,
+  HomepageItem,
+  AboutUsPage,
+  SystemSettings,
 };
