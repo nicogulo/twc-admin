@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   Button,
@@ -147,9 +147,7 @@ export const ProductListPage: React.FC = () => {
     pageSize: 20,
     total: 0,
   });
-
-  // Language preference (from context or settings)
-  const [language, setLanguage] = useState<'en' | 'id'>('en');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Debounce search input
   useEffect(() => {
@@ -161,78 +159,73 @@ export const ProductListPage: React.FC = () => {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const loadInitialData = useCallback(async () => {
-    try {
-      // Load brands and categories
-      const [brandsRes, categoriesRes] = await Promise.all([
-        productAPI.getBrands({ per_page: 100 }),
-        productAPI.getCategories({ per_page: 100 }),
-      ]);
-      setBrands(brandsRes);
-      setCategories(categoriesRes.data);
-    } catch (error: any) {
-      console.error('Failed to load initial data:', error);
-      message.error(
-        error.response?.data?.message || 'Failed to load brands and categories'
-      );
-    }
+  // Load brands and categories once on mount
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const [brandsRes, categoriesRes] = await Promise.all([
+          productAPI.getBrands({ per_page: 100 }),
+          productAPI.getCategories({ per_page: 100 }),
+        ]);
+        setBrands(brandsRes);
+        setCategories(categoriesRes.data);
+      } catch (error: any) {
+        console.error('Failed to load initial data:', error);
+        message.error(
+          error.response?.data?.message || 'Failed to load brands and categories'
+        );
+      }
+    };
+    loadInitialData();
   }, []);
 
-  const loadProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params: any = {
-        per_page: pagination.pageSize,
-        page: pagination.current,
-        orderby: 'date',
-        order: 'desc',
-      };
-
-      if (filters.search) {
-        params.search = filters.search;
-      }
-      if (filters.status) {
-        params.status = filters.status;
-      }
-      if (filters.category) {
-        params.category = filters.category;
-      }
-      if (filters.brandIds && filters.brandIds.length > 0) {
-        params.brand = filters.brandIds.join(',');
-      }
-
-      // Use axios directly to get headers
-      const response = await productAPI.getAll(params);
-
-      setFilteredProducts(response.data || response);
-
-      // WooCommerce returns pagination info in response headers
-      // x-wp-total: total number of items
-      // x-wp-totalpages: total number of pages
-      const totalItems = response.headers?.['x-wp-total']
-        ? parseInt(response.headers['x-wp-total'], 10)
-        : (response.data || response).length;
-
-      setPagination((prev) => ({
-        ...prev,
-        total: totalItems,
-      }));
-    } catch (error: any) {
-      console.error('Failed to load products:', error);
-      message.error(error.response?.data?.message || 'Failed to load products');
-      setFilteredProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.current, pagination.pageSize, filters]);
-
+  // Load products when pagination or filters change
   useEffect(() => {
-    loadInitialData();
-  }, [loadInitialData]);
+    const loadProducts = async () => {
+      setLoading(true);
+      try {
+        const params: any = {
+          per_page: pagination.pageSize,
+          page: pagination.current,
+          orderby: 'date',
+          order: 'desc',
+        };
 
-  useEffect(() => {
+        if (filters.search) {
+          params.search = filters.search;
+        }
+        if (filters.status) {
+          params.status = filters.status;
+        }
+        if (filters.category) {
+          params.category = filters.category;
+        }
+        if (filters.brandIds && filters.brandIds.length > 0) {
+          params.brand = filters.brandIds.join(',');
+        }
+
+        const response = await productAPI.getAll(params);
+        setFilteredProducts(response.data || response);
+
+        const totalItems = response.headers?.['x-wp-total']
+          ? parseInt(response.headers['x-wp-total'], 10)
+          : (response.data || response).length;
+
+        setPagination((prev) => ({
+          ...prev,
+          total: totalItems,
+        }));
+      } catch (error: any) {
+        console.error('Failed to load products:', error);
+        message.error(error.response?.data?.message || 'Failed to load products');
+        setFilteredProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadProducts();
-  }, [loadProducts]);
+  }, [pagination.current, pagination.pageSize, filters, refreshTrigger]);
 
   const handleTableChange = (newPagination: TablePaginationConfig) => {
     setPagination({
@@ -243,7 +236,7 @@ export const ProductListPage: React.FC = () => {
   };
 
   const handleRefresh = () => {
-    loadProducts();
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   const handleDelete = (record: WooCommerceProduct) => {
@@ -265,9 +258,9 @@ export const ProductListPage: React.FC = () => {
       okType: 'danger',
       onOk: async () => {
         try {
-          await productAPI.delete(record.id, false); // false = move to trash, true = permanent delete
+          await productAPI.delete(record.id, false);
           message.success('Product moved to trash successfully');
-          loadProducts();
+          setRefreshTrigger((prev) => prev + 1);
         } catch (error: any) {
           console.error('Failed to delete product:', error);
           message.error(

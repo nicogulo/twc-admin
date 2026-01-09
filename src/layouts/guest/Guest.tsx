@@ -15,19 +15,16 @@ import {
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
-  AppstoreAddOutlined,
   GithubOutlined,
   LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  ProductOutlined,
 } from '@ant-design/icons';
 import { useMediaQuery } from 'react-responsive';
 import { Logo, NProgress } from '../../components';
 import {
   PATH_AUTH,
   PATH_DASHBOARD,
-  PATH_DOCS,
   PATH_GITHUB,
   PATH_LANDING,
 } from '../../constants';
@@ -92,16 +89,6 @@ export const GuestLayout = () => {
           {!isMobile ? (
             <>
               <Flex gap="small">
-                <Link to={PATH_DOCS.productRoadmap} target="_blank">
-                  <Button icon={<ProductOutlined />} type="link">
-                    Product Roadmap
-                  </Button>
-                </Link>
-                <Link to={PATH_DOCS.components} target="_blank">
-                  <Button icon={<AppstoreAddOutlined />} type="link">
-                    Components
-                  </Button>
-                </Link>
                 <Link to={PATH_GITHUB.repo} target="_blank">
                   <Button icon={<GithubOutlined />} type="link">
                     Give us a star
@@ -179,19 +166,9 @@ export const GuestLayout = () => {
       <Drawer title="Menu" placement="left" onClose={onClose} open={open}>
         <>
           <Flex gap="small" vertical>
-            <Link to={PATH_DOCS.productRoadmap} target="_blank">
-              <Button icon={<ProductOutlined />} type="link">
-                Roadmap
-              </Button>
-            </Link>
             <Link to={PATH_DASHBOARD.default}>
               <Button icon={<LoginOutlined />} type="text">
                 Live Preview
-              </Button>
-            </Link>
-            <Link to={PATH_DOCS.components} target="_blank">
-              <Button icon={<AppstoreAddOutlined />} type="text">
-                Components
               </Button>
             </Link>
             <Link to={PATH_GITHUB.repo} target="_blank">
