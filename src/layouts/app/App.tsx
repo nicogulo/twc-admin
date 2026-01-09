@@ -6,7 +6,6 @@ import {
   Input,
   Layout,
   MenuProps,
-  message,
   theme,
   Tooltip,
   Switch,
@@ -25,20 +24,17 @@ import {
   MoonOutlined,
   SunOutlined,
 } from '@ant-design/icons';
-import {
-  CSSTransition,
-  SwitchTransition,
-  TransitionGroup,
-} from 'react-transition-group';
+
 import { useMediaQuery } from 'react-responsive';
 import SideNav from './SideNav.tsx';
 import HeaderNav from './HeaderNav.tsx';
 import FooterNav from './FooterNav.tsx';
 import { NProgress } from '../../components';
-import { PATH_LANDING } from '../../constants';
+import { PATH_AUTH } from '../../constants';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../../redux/theme/themeSlice.ts';
 import { RootState } from '../../redux/store.ts';
+import { useAuth } from '../../hooks/useAuth.tsx';
 const { Content } = Layout;
 
 type AppLayoutProps = {
@@ -52,10 +48,11 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const isMobile = useMediaQuery({ maxWidth: 769 });
   const [collapsed, setCollapsed] = useState(true);
   const [navFill, setNavFill] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { logout } = useAuth();
+
   const location = useLocation();
   const navigate = useNavigate();
-  const nodeRef = useRef(null);
+
   const floatBtnRef = useRef(null);
   const dispatch = useDispatch();
   const { mytheme } = useSelector((state: RootState) => state.theme);
@@ -84,14 +81,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       icon: <LogoutOutlined />,
       danger: true,
       onClick: () => {
-        message.open({
-          type: 'loading',
-          content: 'signing you out',
-        });
-
-        setTimeout(() => {
-          navigate(PATH_LANDING.root);
-        }, 1000);
+        logout();
+        navigate(PATH_AUTH.signin);
       },
     },
   ];
@@ -112,7 +103,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
 
   return (
     <>
-      <NProgress isAnimating={isLoading} key={location.key} />
+      <NProgress isAnimating={false} key={location.key} />
       <Layout
         style={{
           minHeight: '100vh',
@@ -222,29 +213,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
               minHeight: 360,
             }}
           >
-            <TransitionGroup>
-              <SwitchTransition>
-                <CSSTransition
-                  key={`css-transition-${location.key}`}
-                  nodeRef={nodeRef}
-                  onEnter={() => {
-                    setIsLoading(true);
-                  }}
-                  onEntered={() => {
-                    setIsLoading(false);
-                  }}
-                  timeout={300}
-                  classNames="bottom-to-top"
-                  unmountOnExit
-                >
-                  {() => (
-                    <div ref={nodeRef} style={{ background: 'none' }}>
-                      {children}
-                    </div>
-                  )}
-                </CSSTransition>
-              </SwitchTransition>
-            </TransitionGroup>
+            <div style={{ background: 'none' }}>{children}</div>
             <div ref={floatBtnRef}>
               <FloatButton.BackTop />
             </div>

@@ -6,7 +6,6 @@ import {
   Flex,
   Form,
   Input,
-  message,
   Row,
   theme,
   Typography,
@@ -18,9 +17,10 @@ import {
 } from '@ant-design/icons';
 import { Logo } from '../../components';
 import { useMediaQuery } from 'react-responsive';
-import { PATH_AUTH, PATH_DASHBOARD } from '../../constants';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { PATH_AUTH, PATH_LANDING } from '../../constants';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 
 const { Title, Text, Link } = Typography;
 
@@ -36,20 +36,36 @@ export const SignInPage = () => {
   } = theme.useToken();
   const isMobile = useMediaQuery({ maxWidth: 769 });
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
-    setLoading(true);
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      const from = (location.state as any)?.from?.pathname || PATH_LANDING.root;
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, isLoading, navigate, location]);
 
-    message.open({
-      type: 'success',
-      content: 'Login successful',
-    });
+  const onFinish = async (values: any) => {
+    try {
+      setLoading(true);
 
-    setTimeout(() => {
-      navigate(PATH_DASHBOARD.default);
-    }, 5000);
+      // Call API login
+      await login(values.email, values.password);
+
+      // Get redirect path from location state or default to home
+      const from = (location.state as any)?.from?.pathname || PATH_LANDING.root;
+
+      // Navigate to previous page or home
+      navigate(from, { replace: true });
+    } catch (error) {
+      // Error handling is done in AuthContext
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -68,11 +84,11 @@ export const SignInPage = () => {
         >
           <Logo color="white" />
           <Title level={2} className="text-white">
-            Welcome back to Antd Admin
+            Welcome back to TWC Admin
           </Title>
           <Text className="text-white" style={{ fontSize: 18 }}>
-            A dynamic and versatile multipurpose dashboard utilizing Ant Design,
-            React, TypeScript, and Vite.
+            The Watch Collector Admin Panel - Manage your luxury watch
+            inventory, brands, and website content.
           </Text>
         </Flex>
       </Col>
@@ -95,8 +111,8 @@ export const SignInPage = () => {
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
             initialValues={{
-              email: 'demo@email.com',
-              password: 'demo123',
+              email: 'testuser',
+              password: 'gq)am&z3mnGSSzWApD@HgQ(2',
               remember: true,
             }}
             onFinish={onFinish}
@@ -107,10 +123,10 @@ export const SignInPage = () => {
             <Row gutter={[8, 0]}>
               <Col xs={24}>
                 <Form.Item<FieldType>
-                  label="Email"
+                  label="Username"
                   name="email"
                   rules={[
-                    { required: true, message: 'Please input your email' },
+                    { required: true, message: 'Please input your username' },
                   ]}
                 >
                   <Input />
