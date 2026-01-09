@@ -171,3 +171,12 @@
     overflow: hidden;
   }
 }
+
+.ant-table-wrapper td.ant-table-column-sort,
+.ant-table-wrapper .ant-table-thead th.ant-table-column-sort,
+.ant-table-wrapper .ant-table-thead th.ant-table-column-has-sorters:hover {
+  background-color: transparent !important;
+  &:hover {
+    background-color: #e0f1ff !important;
+  }
+}

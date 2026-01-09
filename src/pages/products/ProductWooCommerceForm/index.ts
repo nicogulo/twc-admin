@@ -1,0 +1,1 @@
+export { ProductWooCommerceFormPage } from './ProductWooCommerceFormPage';

@@ -1,0 +1,1 @@
+export { BrandManagementPage } from './BrandManagementPage';

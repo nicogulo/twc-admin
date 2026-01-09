@@ -1,0 +1,1 @@
+export { AboutUsSettingsPage } from './AboutUsSettingsPage';

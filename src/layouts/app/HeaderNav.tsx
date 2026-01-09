@@ -7,6 +7,7 @@ type HeaderNavProps = {
   navFill?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const HeaderNav = ({ navFill, ...others }: HeaderNavProps) => {
   const nodeRef = useRef(null);
 

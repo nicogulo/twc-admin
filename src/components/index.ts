@@ -1,5 +1,6 @@
 export { BackBtn } from './BackBtn/BackBtn.tsx';
 export { BlogsListCard } from './corporate/BlogsListCard/BlogsListCard';
+export { BrandForm } from './BrandForm';
 export { Card } from './Card/Card';
 export { ContactForm } from './ContactForm/ContactForm';
 export { EmployeeCard } from './EmployeeCard/EmployeeCard';
@@ -18,5 +19,7 @@ export { SocialMediaCard } from './SocialMediaCard/SocialMediaCard';
 export { TimelineCard } from './TimelineCard/TimelineCard';
 export { UserAvatar } from './UserAvatar/UserAvatar';
 export * from './Nprogress';
+export { ProtectedRoute } from './ProtectedRoute';
+export { UserMenu } from './UserMenu/UserMenu';
 export * from './dashboard';
 export * from './Container';

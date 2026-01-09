@@ -5,3 +5,4 @@ export * from './corporate';
 export * from './userAccount';
 export * from './authentication';
 export * from './errors';
+export * from './products';

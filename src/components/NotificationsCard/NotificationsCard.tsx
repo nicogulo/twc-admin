@@ -7,7 +7,7 @@ import './styles.css';
 type Props = {
   data?: Notifications[];
   loading?: boolean;
-  error?: any;
+  error?: unknown;
 } & CardProps;
 
 export const NotificationsCard = ({
