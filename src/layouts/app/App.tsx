@@ -18,7 +18,6 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MessageOutlined,
-  QuestionOutlined,
   SettingOutlined,
   UserOutlined,
   MoonOutlined,
@@ -30,7 +29,7 @@ import SideNav from './SideNav.tsx';
 import HeaderNav from './HeaderNav.tsx';
 import FooterNav from './FooterNav.tsx';
 import { NProgress } from '../../components';
-import { PATH_AUTH, PATH_PROFILE } from '../../constants';
+import { PATH_AUTH, PATH_PROFILE, PATH_SYSTEM } from '../../constants';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../../redux/theme/themeSlice.ts';
 import { RootState } from '../../redux/store.ts';
@@ -48,7 +47,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const isMobile = useMediaQuery({ maxWidth: 769 });
   const [collapsed, setCollapsed] = useState(true);
   const [navFill, setNavFill] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -61,17 +60,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       key: 'user-profile-link',
       label: 'profile',
       icon: <UserOutlined />,
+      onClick: () => navigate(PATH_PROFILE.root),
     },
     {
       key: 'user-settings-link',
       label: 'settings',
       icon: <SettingOutlined />,
-      onClick: () => navigate(PATH_PROFILE.root),
-    },
-    {
-      key: 'user-help-link',
-      label: 'help center',
-      icon: <QuestionOutlined />,
+      onClick: () => navigate(PATH_SYSTEM.root),
     },
     {
       type: 'divider',
@@ -194,7 +189,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
               <Dropdown menu={{ items }} trigger={['click']}>
                 <Flex>
                   <img
-                    src="/me.jpg"
+                    src={user?.avatar_urls?.['96']}
                     alt="user profile photo"
                     height={36}
                     width={36}

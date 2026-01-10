@@ -67,7 +67,6 @@ export const SystemSettingsPage: React.FC = () => {
   // User Management - Create User
   const { createUser, loading: creating } = useCreateUser();
   const isAdmin = useIsAdmin();
-  console.log('Is Admin:', isAdmin);
 
   const handleCreateUser = async (values: any) => {
     try {

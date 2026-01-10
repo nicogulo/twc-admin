@@ -121,6 +121,7 @@ const SideNav = ({ ...others }: SideNavProps) => {
         gap="small"
         imgSize={{ h: 28, w: 28 }}
         style={{ padding: '1rem 0' }}
+        withLogo={false}
       />
       <ConfigProvider
         theme={{

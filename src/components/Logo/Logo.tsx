@@ -13,6 +13,7 @@ type LogoProps = {
   asLink?: boolean;
   href?: string;
   bgColor?: CSSProperties['backgroundColor'];
+  withLogo?: boolean;
 } & Partial<FlexProps>;
 
 export const Logo = ({
@@ -21,6 +22,7 @@ export const Logo = ({
   href,
   imgSize,
   bgColor,
+  withLogo = true,
   ...others
 }: LogoProps) => {
   const {
@@ -30,11 +32,13 @@ export const Logo = ({
   return asLink ? (
     <Link to={href || '#'} className="logo-link">
       <Flex gap={others.gap || 'small'} align="center" {...others}>
-        <img
-          src="/logo-no-background.png"
-          alt="design sparx logo"
-          height={imgSize?.h || 48}
-        />
+        {withLogo && (
+          <img
+            src="/logo-no-background.png"
+            alt="design sparx logo"
+            height={imgSize?.h || 48}
+          />
+        )}
         <Typography.Title
           level={5}
           type="secondary"
@@ -46,7 +50,7 @@ export const Logo = ({
             borderRadius,
           }}
         >
-          Antd Admin
+          TWC Admin
         </Typography.Title>
       </Flex>
     </Link>
