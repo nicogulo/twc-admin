@@ -20,6 +20,7 @@ export const useHasCapability = (capability: string): boolean => {
 // Helper hook to check if user has any of the specified roles
 export const useHasRole = (roles: string | string[]): boolean => {
   const { user } = useAuth();
+
   if (!user?.roles) return false;
 
   const roleArray = Array.isArray(roles) ? roles : [roles];

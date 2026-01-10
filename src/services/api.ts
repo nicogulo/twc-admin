@@ -98,7 +98,9 @@ export const authAPI = {
 
   // Get current user info
   getCurrentUser: async () => {
-    const response = await apiClient.get('/wp-json/wp/v2/users/me');
+    const response = await apiClient.get('/wp-json/wp/v2/users/me', {
+      params: { context: 'edit' },
+    });
     return response.data;
   },
 };
@@ -106,7 +108,9 @@ export const authAPI = {
 // User Management API
 export const userAPI = {
   getAll: async (params?: any) => {
-    const response = await apiClient.get('/wp-json/wp/v2/users', { params });
+    const response = await apiClient.get('/wp-json/wp/v2/users', {
+      params: { ...params, context: 'edit' },
+    });
     return response.data;
   },
 

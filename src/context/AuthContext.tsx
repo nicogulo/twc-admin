@@ -55,18 +55,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const loadUser = async () => {
       try {
         const savedToken = Cookies.get('twc_jwt_token');
-        const savedUser = Cookies.get('twc_user');
 
-        if (savedToken && savedUser) {
+        if (savedToken) {
           setToken(savedToken);
-          setUser(JSON.parse(savedUser));
 
-          // Validate token
+          // Validate token and fetch user data from API
           try {
             await authAPI.validateToken();
+
+            // Fetch user data from API endpoint
+            const userResponse = await authAPI.getCurrentUser();
+            const userData: User = {
+              id: userResponse.id,
+              username: userResponse.username || userResponse.slug,
+              name: userResponse.name,
+              email: userResponse.email,
+              roles: userResponse.roles || [],
+              capabilities: userResponse.capabilities || {},
+              avatar_urls: userResponse.avatar_urls,
+            };
+            setUser(userData);
           } catch (error) {
             // Token invalid, clear auth
-            logout();
+            Cookies.remove('twc_jwt_token');
+            Cookies.remove('twc_refresh_token');
+            setToken(null);
+            setUser(null);
           }
         }
       } catch (error) {
@@ -87,11 +101,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const tokenResponse = await authAPI.login(username, password);
       const jwtToken = tokenResponse.token;
 
-      // Save token to cookie (7 days)
+      // Save only token to cookie (7 days)
       Cookies.set('twc_jwt_token', jwtToken, { expires: 7 });
       setToken(jwtToken);
 
-      // Get user info
+      // Fetch user info from API endpoint
       const userResponse = await authAPI.getCurrentUser();
       const userData: User = {
         id: userResponse.id,
@@ -103,8 +117,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         avatar_urls: userResponse.avatar_urls,
       };
 
-      // Save user to cookie
-      Cookies.set('twc_user', JSON.stringify(userData), { expires: 7 });
       setUser(userData);
 
       message.success(`Welcome back, ${userData.name}!`);
@@ -126,10 +138,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const logout = useCallback(() => {
-    // Clear cookies
+    // Clear cookies (only token-related)
     Cookies.remove('twc_jwt_token');
     Cookies.remove('twc_refresh_token');
-    Cookies.remove('twc_user');
 
     // Clear state
     setToken(null);
@@ -149,6 +160,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshUser = useCallback(async () => {
     try {
+      // Fetch fresh user data from API endpoint
       const userResponse = await authAPI.getCurrentUser();
       const userData: User = {
         id: userResponse.id,
@@ -160,7 +172,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         avatar_urls: userResponse.avatar_urls,
       };
 
-      Cookies.set('twc_user', JSON.stringify(userData), { expires: 7 });
       setUser(userData);
     } catch (error) {
       console.error('Error refreshing user:', error);
