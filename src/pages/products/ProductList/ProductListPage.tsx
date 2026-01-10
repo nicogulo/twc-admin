@@ -170,9 +170,9 @@ export const ProductListPage: React.FC = () => {
         setBrands(brandsRes);
         setCategories(categoriesRes.data);
       } catch (error: any) {
-        console.error('Failed to load initial data:', error);
         message.error(
-          error.response?.data?.message || 'Failed to load brands and categories'
+          error.response?.data?.message ||
+            'Failed to load brands and categories'
         );
       }
     };
@@ -216,8 +216,9 @@ export const ProductListPage: React.FC = () => {
           total: totalItems,
         }));
       } catch (error: any) {
-        console.error('Failed to load products:', error);
-        message.error(error.response?.data?.message || 'Failed to load products');
+        message.error(
+          error.response?.data?.message || 'Failed to load products'
+        );
         setFilteredProducts([]);
       } finally {
         setLoading(false);

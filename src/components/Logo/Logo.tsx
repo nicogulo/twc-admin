@@ -57,19 +57,6 @@ export const Logo = ({
         alt="design sparx logo"
         height={imgSize?.h || 48}
       />
-      <Typography.Title
-        level={4}
-        type="secondary"
-        style={{
-          color,
-          margin: 0,
-          padding: `4px 8px`,
-          backgroundColor: bgColor,
-          borderRadius,
-        }}
-      >
-        Antd Admin
-      </Typography.Title>
     </Flex>
   );
 };

@@ -11,11 +11,7 @@ import {
   theme,
   Typography,
 } from 'antd';
-import {
-  FacebookFilled,
-  GoogleOutlined,
-  TwitterOutlined,
-} from '@ant-design/icons';
+
 import { Logo } from '../../components';
 import { useMediaQuery } from 'react-responsive';
 import { PATH_AUTH, PATH_DASHBOARD } from '../../constants';
@@ -71,11 +67,11 @@ export const SignUpPage = () => {
         >
           <Logo color="white" />
           <Title level={2} className="text-white">
-            Welcome to Antd Admin
+            Welcome back to TWC Admin
           </Title>
           <Text className="text-white" style={{ fontSize: 18 }}>
-            A dynamic and versatile multipurpose dashboard utilizing Ant Design,
-            React, TypeScript, and Vite.
+            The Watch Collector Admin Panel - Manage your luxury watch
+            inventory, brands, and website content.
           </Text>
         </Flex>
       </Col>
@@ -92,16 +88,7 @@ export const SignUpPage = () => {
             <Text>Already have an account?</Text>
             <Link href={PATH_AUTH.signin}>Sign in here</Link>
           </Flex>
-          <Flex
-            vertical={isMobile}
-            gap="small"
-            wrap="wrap"
-            style={{ width: '100%' }}
-          >
-            <Button icon={<GoogleOutlined />}>Sign up with Google</Button>
-            <Button icon={<FacebookFilled />}>Sign up with Facebook</Button>
-            <Button icon={<TwitterOutlined />}>Sign up with Twitter</Button>
-          </Flex>
+
           <Divider className="m-0">or</Divider>
           <Form
             name="sign-up-form"
